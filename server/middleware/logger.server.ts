@@ -8,9 +8,8 @@ export default defineEventHandler(async (event) => {
     } catch { }
 
     console.log(
-        new Date().toLocaleString(),
         event.method,
-        event.node.req.url,
-        body ? `Body: ${JSON.stringify(body)}` : ''
+        event.node.req.url
+        // body ? `Body: ${JSON.stringify(body)}` : ''
     )
 })

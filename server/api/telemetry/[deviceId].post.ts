@@ -18,11 +18,20 @@ export default defineEventHandler(async (event) => {
     UPDATE devices SET status = 'online', last_seen = ? WHERE id = ?
   `).run(Math.floor(Date.now() / 1000), deviceId)
 
-  // 如果没有body.auto_watering为0代表这次没有自动浇水 要调取上一条记录的自动浇水时间
-  // 如果为1则录入服务器当前时间
-  const auto_watering_time = body.auto_watering === 0 ? db.prepare(`
-    SELECT auto_watering FROM telemetry WHERE device_id = ? ORDER BY timestamp DESC LIMIT 1
-  `).get(deviceId)?.auto_watering : Math.floor(Date.now() / 1000)
+  let auto_watering_time: number | null = null
+
+  if (body.auto_watering === 1) {
+    auto_watering_time = Math.floor(Date.now() / 1000)
+  } else {
+    const last = db.prepare(`
+    SELECT auto_watering FROM telemetry
+    WHERE device_id = ?
+    ORDER BY timestamp DESC
+    LIMIT 1
+  `).get(deviceId)
+
+    auto_watering_time = last?.auto_watering ?? null
+  }
 
   // 插入遥测数据
   db.prepare(`
