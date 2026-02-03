@@ -1,8 +1,8 @@
-## 服务端部署
-1. 安装`docker`
-2. 进入当前文件夹的目录
-3. 执行命令`docker-compose up -d —-build`
-4. 测试访问`http://localhost:3000`
+## 运行命令
+```bash
+npm install
+npm run dev
+```
 
 ## 接口详情
 - /api/login：post方法，参数：username、password
@@ -12,7 +12,3 @@
 - /api/history：get方法，参数：id、days（表示获取过去几天的数据）
 - /api/command：post方法，参数deviceId、command、duration。此方法还在开发中。。。
 - /api/telemetry/[deviceId]：post方法，参数：secret、soil_humidity、temperature、light_intensity、air_humidity、auto_watering
-
-## 开发运行命令
-npm install
-npm run dev
