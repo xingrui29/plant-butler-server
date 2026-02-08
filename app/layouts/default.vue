@@ -1,25 +1,21 @@
-<!-- layouts/default.vue -->
 <template>
-    <el-container>
-        <el-header class="header">
-            <div class="header-left">
-                🌱 智能浇水系统
-            </div>
+    <el-container style="height: 100vh;">
+        <el-header height="60px">
+            <el-row justify="space-between" align="middle" style="height: 100%;">
+                <el-text strong size="large">
+                    后台管理系统
+                </el-text>
 
-            <div class="header-right">
                 <el-dropdown>
                     <el-button type="primary">
                         <el-icon>
                             <User />
                         </el-icon>
-                        <span>{{ username }}&nbsp;</span>
+                        <span>{{ username }}</span>
                         <el-icon>
                             <ArrowDown />
                         </el-icon>
                     </el-button>
-                    <div class="user-dropdown">
-
-                    </div>
 
                     <template #dropdown>
                         <el-dropdown-menu>
@@ -29,37 +25,38 @@
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
-            </div>
+            </el-row>
         </el-header>
 
         <el-container>
-            <el-aside width="200px" class="aside">
-                <el-menu :default-active="activeMenu" router class="menu">
+            <el-aside width="200px">
+                <el-menu :default-active="activeMenu" router>
                     <el-menu-item index="/">
                         <el-icon>
                             <Monitor />
                         </el-icon>
                         <span>设备概览</span>
                     </el-menu-item>
+                    <el-menu-item index="/users">
+                        <el-icon>
+                            <User />
+                        </el-icon>
+                        <span>用户管理</span>
+                    </el-menu-item>
                 </el-menu>
             </el-aside>
 
-            <el-main class="main">
+            <el-main>
                 <slot />
             </el-main>
         </el-container>
     </el-container>
 </template>
-
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import {
-    User,
-    ArrowDown,
-    Monitor
-} from '@element-plus/icons-vue'
+import { User, ArrowDown, Monitor } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -77,46 +74,12 @@ onMounted(() => {
     username.value = localStorage.getItem('username') || ''
 })
 </script>
-
 <style scoped>
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    border-bottom: 1px solid #eee;
-    height: 60px;
+.el-header {
+    border-bottom: 1px solid var(--el-border-color);
 }
 
-.header-left {
-    font-weight: bold;
-}
-
-.header-right {
-    cursor: pointer;
-}
-
-.user-dropdown {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0 12px;
-    height: 100%;
-    cursor: pointer;
-    color: inherit;
-    font-size: 14px;
-}
-
-.aside {
-    border-right: 1px solid #eee;
-    height: calc(100vh - 60px);
-}
-
-.menu {
-    border-right: none;
-}
-
-.main {
-    padding: 20px;
+.el-aside {
+    border-right: 1px solid var(--el-border-color);
 }
 </style>

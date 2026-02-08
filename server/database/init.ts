@@ -9,7 +9,7 @@ const db = new Database(dbPath)
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT,
+    username TEXT UNIQUE,
     email TEXT,
     password_hash TEXT,
     created_at INTEGER

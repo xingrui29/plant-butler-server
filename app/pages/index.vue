@@ -1,5 +1,3 @@
-<!-- app/pages/index.vue -->
-
 <template>
     <el-row :gutter="20">
         <el-col :span="8" v-for="device in devices" :key="device.id">

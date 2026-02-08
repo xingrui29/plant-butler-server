@@ -1,4 +1,3 @@
-// plugins/redirect.client.ts
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 
