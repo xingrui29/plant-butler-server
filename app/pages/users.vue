@@ -1,5 +1,5 @@
 <template>
-    <el-card>
+    <el-card shadow="never">
         <template #header>
             <el-row justify="space-between" align="middle">
                 <el-text strong>用户管理</el-text>

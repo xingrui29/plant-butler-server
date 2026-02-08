@@ -43,6 +43,12 @@
                         </el-icon>
                         <span>用户管理</span>
                     </el-menu-item>
+                    <el-menu-item index="/commands">
+                        <el-icon>
+                            <Monitor />
+                        </el-icon>
+                        <span>指令管理</span>
+                    </el-menu-item>
                 </el-menu>
             </el-aside>
 
