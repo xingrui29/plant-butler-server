@@ -15,7 +15,7 @@ export default defineNitroPlugin(() => {
 
 function startDeviceMonitor() {
     const CHECK_INTERVAL = 5000 // 每 5 秒检查一次
-    const OFFLINE_THRESHOLD = 10000 // 10 秒超时（毫秒）
+    const OFFLINE_THRESHOLD = 20000 // 10 秒超时（毫秒）
 
     monitorInterval = setInterval(() => {
         try {

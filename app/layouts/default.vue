@@ -1,62 +1,64 @@
 <template>
-    <el-container style="height: 100vh;">
-        <el-header height="60px">
-            <el-row justify="space-between" align="middle" style="height: 100%;">
-                <el-text strong size="large">
-                    后台管理系统
-                </el-text>
+    <div style="height: 100vh; width: 100vw; overflow: hidden;">
+        <el-container style="height: 100%;">
+            <el-header height="60px" style="overflow: hidden;">
+                <el-row justify="space-between" align="middle" style="height: 100%;">
+                    <el-text strong size="large">
+                        后台管理系统
+                    </el-text>
 
-                <el-dropdown>
-                    <el-button type="primary">
-                        <el-icon>
-                            <User />
-                        </el-icon>
-                        <span>{{ username }}</span>
-                        <el-icon>
-                            <ArrowDown />
-                        </el-icon>
-                    </el-button>
+                    <el-dropdown>
+                        <el-button type="primary">
+                            <el-icon>
+                                <User />
+                            </el-icon>
+                            <span>{{ username }}</span>
+                            <el-icon>
+                                <ArrowDown />
+                            </el-icon>
+                        </el-button>
 
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item @click="logout">
-                                退出系统
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
-            </el-row>
-        </el-header>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item @click="logout">
+                                    退出系统
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                </el-row>
+            </el-header>
 
-        <el-container>
-            <el-aside width="200px">
-                <el-menu :default-active="activeMenu" router>
-                    <el-menu-item index="/">
-                        <el-icon>
-                            <Monitor />
-                        </el-icon>
-                        <span>设备概览</span>
-                    </el-menu-item>
-                    <el-menu-item index="/users">
-                        <el-icon>
-                            <User />
-                        </el-icon>
-                        <span>用户管理</span>
-                    </el-menu-item>
-                    <el-menu-item index="/commands">
-                        <el-icon>
-                            <Monitor />
-                        </el-icon>
-                        <span>指令管理</span>
-                    </el-menu-item>
-                </el-menu>
-            </el-aside>
+            <el-container style="overflow: hidden; height: 100%;">
+                <el-aside width="150px">
+                    <el-menu :default-active="activeMenu" router>
+                        <el-menu-item index="/">
+                            <el-icon>
+                                <Monitor />
+                            </el-icon>
+                            <span>设备概览</span>
+                        </el-menu-item>
+                        <el-menu-item index="/users">
+                            <el-icon>
+                                <User />
+                            </el-icon>
+                            <span>用户管理</span>
+                        </el-menu-item>
+                        <el-menu-item index="/commands">
+                            <el-icon>
+                                <Monitor />
+                            </el-icon>
+                            <span>指令管理</span>
+                        </el-menu-item>
+                    </el-menu>
+                </el-aside>
 
-            <el-main>
-                <slot />
-            </el-main>
+                <el-main style="overflow-y: auto;">
+                    <slot />
+                </el-main>
+            </el-container>
         </el-container>
-    </el-container>
+    </div>
 </template>
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
