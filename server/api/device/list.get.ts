@@ -53,8 +53,6 @@ export default defineEventHandler(async (event) => {
 
     return {
         list,
-        total,
-        limit,
-        offset
+        total
     }
 })

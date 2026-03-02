@@ -1,10 +1,10 @@
-// server/api/info.get.ts
+import { defineEventHandler } from 'h3'
 
 export default defineEventHandler(() => {
     return {
         name: 'plant-butler-server',
         version: '1.0.0',
-        description: 'powered by Nuxt 4',
+        description: 'Powered By Nuxt 4',
         localTime: new Date().toLocaleString()
     }
 })
