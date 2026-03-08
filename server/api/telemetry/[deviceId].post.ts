@@ -6,12 +6,15 @@ export default defineEventHandler(async (event) => {
   const deviceId = event.context.params?.deviceId as string
   const body = await readBody(event)
 
-  // 简单验证 secret（实际应查数据库比对）
-  if (body.secret !== 'secret') {
+  const db = getDb()
+
+  const secret = db.prepare(`
+    SELECT secret FROM devices WHERE id = ?
+  `).get(deviceId)?.secret
+
+  if (body.secret !== secret) {
     return { error: 'Invalid secret' }
   }
-
-  const db = getDb()
 
   // 更新设备状态
   db.prepare(`
