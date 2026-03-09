@@ -18,15 +18,22 @@ export default defineEventHandler((event) => {
     WHERE t.rn = 1
   `).all()
 
-    // 根据 user_id 过滤设备
+    // 根据 user_id 过滤设备，并关联用户表获取用户信息
     let devices
     if (userId) {
         devices = db.prepare(`
-            SELECT id, name, status, last_seen FROM devices WHERE user_id = ?
+            SELECT d.id, d.name, d.status, d.last_seen, d.user_id,
+                   u.username as owner_name, u.email as owner_email
+            FROM devices d
+            LEFT JOIN users u ON d.user_id = u.id
+            WHERE d.user_id = ?
         `).all(userId)
     } else {
         devices = db.prepare(`
-            SELECT id, name, status, last_seen FROM devices
+            SELECT d.id, d.name, d.status, d.last_seen, d.user_id,
+                   u.username as owner_name, u.email as owner_email
+            FROM devices d
+            LEFT JOIN users u ON d.user_id = u.id
         `).all()
     }
 
