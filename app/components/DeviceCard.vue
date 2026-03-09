@@ -89,18 +89,37 @@
             <el-icon size="32"><Warning /></el-icon>
             <span>暂无传感器数据</span>
         </div>
+
+        <!-- 浇水按钮 -->
+        <div class="water-action">
+            <el-button
+                type="primary"
+                class="water-btn"
+                :disabled="watering"
+                :loading="watering"
+                @click="handleWater"
+            >
+                💧 {{ device.status === 'online' ? '浇水' : '设备离线' }}
+            </el-button>
+        </div>
     </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { Monitor, Clock, Warning, User } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
-defineProps({
+const props = defineProps({
     device: {
         type: Object,
         required: true
     }
 })
+
+const emit = defineEmits(['refresh'])
+
+const watering = ref(false)
 
 const formatTime = (timestamp) => {
     if (!timestamp) return '从未上线'
@@ -114,6 +133,40 @@ const progressColor = (value) => {
     if (value < 30) return 'linear-gradient(90deg, #f56c6c, #f78989)'
     if (value < 70) return 'linear-gradient(90deg, #e6a23c, #f0c78a)'
     return 'linear-gradient(90deg, #67c23a, #95d475)'
+}
+
+const handleWater = async () => {
+    if (props.device.status !== 'online') {
+        // 设备离线时，仍然发送指令但记录为失败
+        watering.value = true
+        try {
+            const res = await $fetch('/api/command', {
+                method: 'POST',
+                body: { deviceId: props.device.id }
+            })
+            ElMessage.warning(res.message || '设备离线，浇水指令记录为失败')
+        } catch (e) {
+            ElMessage.error('发送指令失败')
+        } finally {
+            watering.value = false
+        }
+        emit('refresh')
+        return
+    }
+
+    watering.value = true
+    try {
+        const res = await $fetch('/api/command', {
+            method: 'POST',
+            body: { deviceId: props.device.id }
+        })
+        ElMessage.success('浇水指令已发送')
+    } catch (e) {
+        ElMessage.error('发送指令失败')
+    } finally {
+        watering.value = false
+    }
+    emit('refresh')
 }
 </script>
 
@@ -351,5 +404,31 @@ const progressColor = (value) => {
     font-size: 13px;
     background: rgba(0, 0, 0, 0.02);
     border-radius: 12px;
+}
+
+/* 浇水按钮 */
+.water-action {
+    margin-top: auto;
+    padding-top: 12px;
+}
+
+.water-btn {
+    width: 100%;
+    border-radius: 12px;
+    font-weight: 500;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.water-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.water-btn:disabled {
+    background: linear-gradient(135deg, #909399 0%, #c0c4cc 100%);
+    box-shadow: none;
 }
 </style>
