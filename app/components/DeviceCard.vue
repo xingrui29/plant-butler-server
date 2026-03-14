@@ -36,9 +36,9 @@
                     <span class="sensor-label">空气湿度</span>
                     <div class="sensor-value-row">
                         <div class="progress-bar">
-                            <div class="progress-fill" :style="{ width: device.telemetry.air_humidity + '%', background: progressColor(device.telemetry.air_humidity) }"></div>
+                            <div class="progress-fill" :style="{ width: formatNumber(device.telemetry.air_humidity) + '%', background: progressColor(device.telemetry.air_humidity) }"></div>
                         </div>
-                        <span class="sensor-value">{{ device.telemetry.air_humidity }}%</span>
+                        <span class="sensor-value">{{ formatNumber(device.telemetry.air_humidity) }}%</span>
                     </div>
                 </div>
             </div>
@@ -49,9 +49,9 @@
                     <span class="sensor-label">土壤湿度</span>
                     <div class="sensor-value-row">
                         <div class="progress-bar">
-                            <div class="progress-fill" :style="{ width: device.telemetry.soil_humidity + '%', background: progressColor(device.telemetry.soil_humidity) }"></div>
+                            <div class="progress-fill" :style="{ width: formatNumber(device.telemetry.soil_humidity) + '%', background: progressColor(device.telemetry.soil_humidity) }"></div>
                         </div>
-                        <span class="sensor-value">{{ device.telemetry.soil_humidity }}%</span>
+                        <span class="sensor-value">{{ formatNumber(device.telemetry.soil_humidity) }}%</span>
                     </div>
                 </div>
             </div>
@@ -59,19 +59,19 @@
 
         <!-- 详细数据 -->
         <div v-if="device.telemetry" class="detail-grid">
-            <div class="detail-item">
+            <div class="detail-item full-width">
                 <span class="detail-icon">🌡</span>
                 <div class="detail-info">
                     <span class="detail-label">温度</span>
-                    <span class="detail-value">{{ device.telemetry.temperature }}°C</span>
+                    <span class="detail-value">{{ formatNumber(device.telemetry.temperature) }}°C</span>
                 </div>
             </div>
 
-            <div class="detail-item">
+            <div class="detail-item full-width">
                 <span class="detail-icon">☀</span>
                 <div class="detail-info">
                     <span class="detail-label">光照</span>
-                    <span class="detail-value">{{ device.telemetry.light_intensity }} lux</span>
+                    <span class="detail-value">{{ formatNumber(device.telemetry.light_intensity) }} lux</span>
                 </div>
             </div>
 
@@ -120,6 +120,11 @@ const props = defineProps({
 const emit = defineEmits(['refresh'])
 
 const watering = ref(false)
+
+const formatNumber = (value) => {
+    if (value == null) return '--'
+    return Number(value).toFixed(2)
+}
 
 const formatTime = (timestamp) => {
     if (!timestamp) return '从未上线'
@@ -354,7 +359,7 @@ const handleWater = async () => {
 /* 详细数据网格 */
 .detail-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 10px;
     margin-top: auto;
 }

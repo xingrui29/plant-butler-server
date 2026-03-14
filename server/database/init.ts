@@ -55,7 +55,7 @@ db.prepare('INSERT OR IGNORE INTO users (username, email, password_hash, created
 db.prepare('INSERT OR IGNORE INTO devices (id, user_id, name, secret, created_at) VALUES (?, ?, ?, ?, ?)')
     .run('0001', 1, '阳台花盆', 'secret', Math.floor(Date.now() / 1000))
 db.prepare('INSERT OR IGNORE INTO devices (id, user_id, name, secret, created_at) VALUES (?, ?, ?, ?, ?)')
-    .run('0002', 1, '厨房花盆', 'secret', Math.floor(Date.now() / 1000))
+    .run('0002', 1, '厨房花盆', 'secret2', Math.floor(Date.now() / 1000))
 
 // 上一次自动浇水为1代表空记录
 db.prepare('INSERT OR IGNORE INTO telemetry (device_id, timestamp, soil_humidity, temperature, light_intensity, air_humidity, auto_watering) VALUES (?, ?, ?, ?, ?, ?, ?)')

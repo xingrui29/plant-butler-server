@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const db = getDb()
-    const now = Date.now()
+    const now = Date.now() / 1000
 
     db.prepare(`
     UPDATE commands
