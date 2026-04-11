@@ -24,6 +24,10 @@
                         <el-icon><Monitor /></el-icon>
                         <span>设备概览</span>
                     </el-menu-item>
+                    <el-menu-item index="/history">
+                        <el-icon><TrendCharts /></el-icon>
+                        <span>历史数据</span>
+                    </el-menu-item>
                     <el-menu-item index="/users">
                         <el-icon><User /></el-icon>
                         <span>用户管理</span>
@@ -77,7 +81,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { User, ArrowDown, Monitor, List, SwitchButton } from '@element-plus/icons-vue'
+import { User, ArrowDown, Monitor, List, SwitchButton, TrendCharts } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -88,6 +92,7 @@ const username = ref('')
 const pageTitle = computed(() => {
     const titles = {
         '/': '设备概览',
+        '/history': '历史数据',
         '/users': '用户管理',
         '/commands': '指令管理'
     }
