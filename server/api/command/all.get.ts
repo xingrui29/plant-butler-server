@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
       executed_at
     FROM commands
     ${whereSql}
-    ORDER BY created_at DESC
+    ORDER BY id DESC
     LIMIT ? OFFSET ?
   `
 

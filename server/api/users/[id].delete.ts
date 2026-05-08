@@ -1,11 +1,13 @@
-import { defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler, getRouterParam } from 'h3'
 import { getDb } from '../../database/db'
 
 export default defineEventHandler(async (event) => {
-    const query = getQuery(event)
-    const id = query.id
-    const db = getDb()
+    const id = getRouterParam(event, 'id')
+    if (!id) {
+        return { success: false, error: '缺少用户ID' }
+    }
 
+    const db = getDb()
     db.prepare(`DELETE FROM users WHERE id = ?`).run(id)
 
     return { success: true }
