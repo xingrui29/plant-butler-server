@@ -32,35 +32,116 @@
         </div>
 
         <!-- 设备网格 -->
-        <div v-if="devices.length > 0" class="device-grid">
+        <div class="device-grid">
             <div v-for="device in devices" :key="device.id" class="device-item">
                 <DeviceCard :device="device" />
             </div>
+            <div class="device-item">
+                <div class="add-card" @click="openAddDevice">
+                    <el-icon size="40" class="add-icon"><Plus /></el-icon>
+                    <span class="add-text">新增设备</span>
+                </div>
+            </div>
         </div>
 
-        <!-- 空状态 -->
-        <div v-else class="empty-state">
-            <div class="empty-icon">
-                <el-icon size="64"><Monitor /></el-icon>
-            </div>
-            <h3>暂无设备</h3>
-            <p>等待设备连接到系统</p>
-        </div>
+        <!-- 新增设备对话框 -->
+        <el-dialog v-model="addDeviceVisible" title="新增设备" width="440px" class="modern-dialog">
+            <el-form :model="addDeviceForm" label-position="top" class="modern-form">
+                <el-form-item label="所属用户">
+                    <el-select v-model="addDeviceForm.user_id" placeholder="请选择用户" filterable style="width: 100%;">
+                        <el-option
+                            v-for="user in userList"
+                            :key="user.id"
+                            :label="user.username"
+                            :value="user.id"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="设备名称">
+                    <el-input v-model="addDeviceForm.name" placeholder="请输入设备名称" :prefix-icon="Monitor" />
+                </el-form-item>
+                <el-form-item label="设备密钥">
+                    <div class="secret-input-row">
+                        <el-input v-model="addDeviceForm.secret" placeholder="设备密钥" :prefix-icon="Key" />
+                    </div>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button class="footer-btn" @click="addDeviceVisible = false">取消</el-button>
+                    <el-button type="primary" class="footer-btn primary" :loading="addingDevice" @click="addDevice">
+                        创建
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { Monitor, CircleCheck, CircleClose } from '@element-plus/icons-vue'
+import { Monitor, CircleCheck, CircleClose, Plus, Key } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import DeviceCard from '~/components/DeviceCard.vue'
 
 const devices = ref([])
+const userList = ref([])
+const addDeviceVisible = ref(false)
+const addingDevice = ref(false)
+const addDeviceForm = ref({
+    user_id: '',
+    name: '',
+    secret: ''
+})
 
 const onlineCount = computed(() => devices.value.filter(d => d.status === 'online').length)
 const offlineCount = computed(() => devices.value.filter(d => d.status !== 'online').length)
 
 const fetchData = async () => {
     devices.value = await $fetch('/api/devices')
+}
+
+const fetchUsers = async () => {
+    try {
+        const res = await $fetch('/api/users', { query: { page: 1, pageSize: 9999 } })
+        userList.value = res.items
+    } catch {
+        userList.value = []
+    }
+}
+
+const openAddDevice = async () => {
+    const currentUserId = localStorage.getItem('userId') || ''
+    addDeviceForm.value = { user_id: currentUserId, name: '', secret: '' }
+    addDeviceVisible.value = true
+    await fetchUsers()
+}
+
+const addDevice = async () => {
+    const { user_id, name, secret } = addDeviceForm.value
+    if (!user_id || !name || !secret) {
+        ElMessage.warning('请填写所有必填项')
+        return
+    }
+
+    addingDevice.value = true
+    try {
+        const res = await $fetch('/api/devices', {
+            method: 'POST',
+            body: { user_id, name, secret }
+        })
+        if (res.error) {
+            ElMessage.error(res.error)
+            return
+        }
+        ElMessage.success(`设备创建成功，ID: ${res.device_id}`)
+        addDeviceVisible.value = false
+        fetchData()
+    } catch (err) {
+        ElMessage.error(err?.data?.error || '创建设备失败')
+    } finally {
+        addingDevice.value = false
+    }
 }
 
 onMounted(() => {
@@ -156,43 +237,114 @@ onMounted(() => {
     min-height: 380px;
 }
 
-/* 空状态 */
-.empty-state {
+/* 新增设备卡片 */
+.add-card {
+    height: 100%;
+    min-height: 380px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 80px 20px;
-    background: rgba(255, 255, 255, 0.5);
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 2px dashed rgba(102, 126, 234, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.empty-icon {
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    margin-bottom: 20px;
+.add-card:hover {
+    border-color: rgba(102, 126, 234, 0.6);
+    background: rgba(255, 255, 255, 0.5);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.1);
+}
+
+.add-icon {
+    color: #667eea;
     opacity: 0.5;
+    transition: all 0.3s ease;
 }
 
-.empty-state h3 {
-    margin: 0 0 8px;
-    font-size: 20px;
+.add-card:hover .add-icon {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.add-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: #8a8a9a;
+    transition: color 0.3s ease;
+}
+
+.add-card:hover .add-text {
+    color: #667eea;
+}
+
+/* 对话框样式 */
+:deep(.el-dialog) {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+:deep(.el-dialog__header) {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-right: 0;
+}
+
+:deep(.el-dialog__title) {
     font-weight: 600;
     color: #1a1a2e;
 }
 
-.empty-state p {
-    margin: 0;
-    color: #8a8a9a;
-    font-size: 14px;
+:deep(.el-dialog__body) {
+    padding: 24px;
+}
+
+.modern-form :deep(.el-input__wrapper) {
+    border-radius: 10px;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.modern-form :deep(.el-input__wrapper:hover) {
+    border-color: rgba(102, 126, 234, 0.5);
+}
+
+.modern-form :deep(.el-input__wrapper.is-focus) {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.secret-input-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.secret-input-row .el-input {
+    flex: 1;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.footer-btn {
+    border-radius: 10px;
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.footer-btn.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
 }
 </style>

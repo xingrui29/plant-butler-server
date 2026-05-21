@@ -63,13 +63,14 @@ const handleLogin = async () => {
 
     loading.value = true
     try {
-        await $fetch('/api/login', {
+        const loginRes = await $fetch('/api/login', {
             method: 'POST',
             body: form.value
         })
 
         ElMessage.success('登录成功')
         localStorage.setItem('username', form.value.username)
+        localStorage.setItem('userId', String(loginRes.user.id))
         router.push('/')
     } catch (err) {
         ElMessage.error(err?.data?.error || '登录失败')
